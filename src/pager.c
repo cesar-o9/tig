@@ -134,9 +134,12 @@ pager_common_read(struct view *view, const char *data, enum line_type type, stru
 	return true;
 }
 
-bool
+static bool
 pager_read(struct view *view, struct buffer *buf, bool force_stop)
 {
+	if (opt_pager_autoscroll && view->pos.offset + view->height == view->lines - 1)
+		do_scroll_view(view, 1);
+
 	if (!buf) {
 		if (!diff_done_highlight(view->private)) {
 			report("Failed run the diff-highlight program: %s", opt_diff_highlight);
